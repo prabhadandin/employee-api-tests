@@ -1,0 +1,213 @@
+{
+  "info": {
+    "_postman_id": "4a07eb66-6f81-4107-85af-acec63c7c862",
+    "name": "CRUD Employee Collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "8229785"
+  },
+  "item": [
+    {
+      "name": "Employee Test Suite",
+      "item": [
+        {
+          "name": "Verify  if employee details created or not",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Verify name of the employee\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    var actualData = jsonData.data;",
+                  "    pm.expect(actualData.name).to.eql(pm.environment.get(\"InputName\"));",
+                  "    pm.expect(actualData.salary.toString()).to.eql(pm.environment.get(\"InputSalary\").toString());",
+                  "    pm.expect(actualData.age.toString()).to.eql(pm.environment.get(\"InputAge\").toString());",
+                  "    pm.environment.set(\"EmployeeID\", actualData.id);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{  \r\n   \"name\":\"{{InputName}}\",\r\n   \"salary\":\"{{InputSalary}}\",\r\n   \"age\":\"{{InputAge}}\"\r\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/create",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "create"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verify and Validate if employee updated",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Check if employee details are updated\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    var updatedData = jsonData.data;",
+                  "    pm.expect(updatedData.name).to.eql(\"TestP14\");",
+                  "    pm.expect(updatedData.age.toString()).to.eql(\"29\");",
+                  "    pm.expect(updatedData.salary.toString()).to.eql(\"$2000\");",
+                  "});",
+                  "pm.test(\"Check success message\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.message).to.include(\"updated\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{  \r\n   \"name\":\"TestP14\",\r\n   \"salary\":\"$2000\",\r\n   \"age\":\"29\"\r\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/update/{{EmployeeID}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "update",
+                "{{EmployeeID}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Employee Details by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Validate employee data is not null\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    // Safety check: The dummy API often returns null if the ID is expired",
+                  "    pm.expect(jsonData.data, \"Record not found (ID might have expired)\").to.not.be.null;",
+                  "});",
+                  "",
+                  "pm.test(\"Check if the employee name matches\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.data !== null) {",
+                  "        // GET responses use 'employee_name', 'employee_salary', and 'employee_age'",
+                  "        pm.expect(jsonData.data.employee_name).to.eql(pm.environment.get(\"InputName\"));",
+                  "    }",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/{{EmployeeID}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{EmployeeID}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              ""
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ]
+}
